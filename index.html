@@ -76,7 +76,13 @@
   #btnB.cool { opacity:.45; filter:grayscale(.6); }
 
   .overlay { position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center;
-     text-align:center; padding:24px; background:radial-gradient(ellipse at center, rgba(12,14,22,.85), rgba(2,3,6,.97)); }
+     text-align:center; padding:24px; overflow-y:auto; background:radial-gradient(ellipse at center, rgba(12,14,22,.85), rgba(2,3,6,.97)); }
+  #howOv { justify-content:flex-start; padding-top:max(20px,env(safe-area-inset-top,20px)); }
+  .rules { max-width:500px; width:100%; text-align:left; margin-top:6px; }
+  .rule { display:flex; gap:11px; align-items:flex-start; margin:11px 2px; font-size:14px; line-height:1.4; color:#dbe6f0; }
+  .rule .ic { font-size:23px; flex:0 0 34px; text-align:center; }
+  .rule u { text-decoration-color:#ffd23a; }
+  #howOv button { margin-bottom:20px; }
   .overlay.hidden { display:none; }
   .overlay h1 { font-size:28px; color:#ffcf3a; text-shadow:0 0 16px #ff7a00,0 3px 0 #5a2a00; letter-spacing:1px; line-height:1.1; margin-bottom:6px; }
   .overlay h1 small { display:block; font-size:13px; color:#9fd6ff; letter-spacing:3px; text-shadow:none; margin-bottom:8px; }
@@ -124,12 +130,20 @@
     <p>Coincé dans un ascenseur avec <b>deux légendes du comptoir</b>. Ils balancent leurs punchlines —
        à toi de les leur <b>RENVOYER</b> pour faire dégonfler leur <b>Ego</b>. Bats les deux pour t'échapper.</p>
     <button id="playBtn">JOUER</button>
-    <div class="hint">
-      <span class="keys">◀ ▶</span> esquiver de couloir<br>
-      <span class="keys">🙄</span> au bon moment = <b>PARADE</b> : renvoie la punchline (+combo, dégâts d'Ego)<br>
-      Enchaîne les parades pour charger le <span class="keys">💢 REGARD ASSASSIN</span><br>
-      Se faire toucher vide ta Patience. Tu peux aussi glisser le doigt.
+  </div>
+
+  <div id="howOv" class="overlay hidden">
+    <h1><small>AVANT DE MONTER</small>COMMENT JOUER</h1>
+    <div class="rules">
+      <div class="rule"><span class="ic">🎯</span><span><b>Le but :</b> survis à <b>2 boss</b> bavards et fais tomber leur jauge d'<b style="color:#ff7fb0">EGO</b> (en haut à droite).</span></div>
+      <div class="rule"><span class="ic">🙄</span><span><b>PARADE (gros bouton central) :</b> quand une réplique fonce sur toi, appuie pour la <b>RENVOYER à l'expéditeur</b>. <u>C'est ÇA qui baisse son Ego.</u> Vise quand le projectile est proche (il brille en jaune).</span></div>
+      <div class="rule"><span class="ic">◀▶</span><span><b>Esquiver :</b> change de couloir pour éviter ce que tu n'as pas le temps de parer (utile quand il en lance plusieurs).</span></div>
+      <div class="rule"><span class="ic">🔥</span><span><b>Combo :</b> enchaîne les parades sans te faire toucher pour des dégâts qui montent.</span></div>
+      <div class="rule"><span class="ic">💢</span><span><b>REGARD ASSASSIN :</b> la barre violette se remplit à chaque parade. Pleine = <b>tape la barre</b> pour tout renvoyer d'un coup et infliger un gros choc d'Ego.</span></div>
+      <div class="rule"><span class="ic">⚠️</span><span>Des <b style="color:#ff6a6a">chevrons rouges</b> préviennent dans quel couloir l'attaque arrive.</span></div>
+      <div class="rule"><span class="ic">❤️</span><span>Ta <b style="color:#5cf2a0">PATIENCE</b> (barre du bas) baisse quand tu es touché. À zéro, tu craques = défaite.</span></div>
     </div>
+    <button id="goBtn">C'EST PARTI ! 🛗</button>
   </div>
 
   <div id="winOv" class="overlay hidden">
@@ -348,7 +362,7 @@ let playerLane=1, microX=0;
 // ---------- boss configs ----------
 const ENEMY_X=4.0, ENEMY_Y=2.0, SPAWN_Y=2.55, HIT_Y=5.0;
 const BOSSES=[
-  { name:"LE ROI DE LA TERRASSE", sub:"chapeau de paille · rosé tiède", max:100, baseSpeed:1.45, maxInt:1.85, minInt:0.95, reflect:8, tex:0, proj:roseTex, taunts:[
+  { name:"LE ROI DE LA TERRASSE", sub:"chapeau de paille · rosé tiède", max:66, baseSpeed:1.35, maxInt:2.05, minInt:1.1, reflect:11, tex:0, proj:roseTex, taunts:[
     "Encore un rosé ? Allez, c'est moi qui régale... ta défaite.",
     "J'ai réservé cette terrasse. Et aussi ta place au sol.",
     "Mon chapeau coûte plus cher que ton plan d'évasion.",
@@ -357,7 +371,7 @@ const BOSSES=[
     "La sagesse vient avec l'apéro. Et l'apéro, c'est MAINTENANT.",
     "Détends-toi, c'est moi qui parle. Toi tu encaisses.",
   ]},
-  { name:"LE STRATÈGE DU COMPTOIR", sub:"chemise à rayures · plan en 3 étapes", max:135, baseSpeed:1.85, maxInt:1.35, minInt:0.72, reflect:7, tex:1, proj:espressoTex, taunts:[
+  { name:"LE STRATÈGE DU COMPTOIR", sub:"chemise à rayures · plan en 3 étapes", max:92, baseSpeed:1.7, maxInt:1.55, minInt:0.85, reflect:10, tex:1, proj:espressoTex, taunts:[
     "J'ai un plan. Étape 1 : toi, par terre.",
     "Au comptoir on m'appelle le stratège. Devine pourquoi.",
     "Mes chemises sont à rayures. Ta patience aussi, bientôt.",
@@ -415,11 +429,12 @@ const sLose  =()=>{[400,330,260,180].forEach((f,i)=>setTimeout(()=>beep(f,0.22,'
 // ---------- input ----------
 function moveLeft(){ if(state!=='play')return; if(playerLane>0){playerLane--; sDodge();} }
 function moveRight(){ if(state!=='play')return; if(playerLane<2){playerLane++; sDodge();} }
+const PARRY_NEAR=1.6; // fenêtre de parade (proche du joueur)
 function tryParryNow(){
-  // parade proactive : renvoie le projectile le plus proche dans la fenêtre
-  let best=-1,bd=99;
+  // parade proactive : renvoie le projectile le plus imminent, TOUS couloirs confondus
+  let best=-1,bd=1e9;
   for(let i=0;i<projectiles.length;i++){ const p=projectiles[i];
-    if(p.dir>0 && !p.parried && p.lane===playerLane && p.y>HIT_Y-1.05 && p.y<HIT_Y+0.05){
+    if(p.dir>0 && !p.parried && p.y>HIT_Y-PARRY_NEAR && p.y<HIT_Y+0.1){
       const d=HIT_Y-p.y; if(d<bd){bd=d; best=i;} } }
   if(best>=0){ doParry(projectiles[best]); return true; }
   return false;
@@ -447,7 +462,8 @@ function bind(id,fn){ $(id).addEventListener('pointerdown',e=>{ e.preventDefault
 bind('btnL',moveLeft); bind('btnR',moveRight); bind('btnB',pressGuard);
 elSuperWrap.addEventListener('pointerdown',e=>{ if(superReady){ e.preventDefault(); audioInit(); doSuper(); } });
 
-$('playBtn').addEventListener('pointerdown',e=>{e.preventDefault(); audioInit(); startGame();});
+$('playBtn').addEventListener('pointerdown',e=>{e.preventDefault(); audioInit(); titleOv.classList.add('hidden'); $('howOv').classList.remove('hidden');});
+$('goBtn').addEventListener('pointerdown',e=>{e.preventDefault(); audioInit(); startGame();});
 document.querySelectorAll('.replayBtn').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault(); audioInit(); startGame();}));
 
 // swipe / tap on scene
@@ -482,7 +498,7 @@ function doParry(p){
 }
 function damageBoss(p){ bossEgo-=p.dmg; bossHurt=0.3; shake=Math.max(shake,0.16); sBossHit();
   if(bossEgo<=0){ bossEgo=0; updateHUD(); defeatBoss(); } }
-function hitPlayer(p){ const dmg=11+Math.min(8,fightTime*0.12)+(enrage?2:0);
+function hitPlayer(p){ const dmg=9+Math.min(6,fightTime*0.1)+(enrage?2:0);
   patience-=dmg; combo=0; comboTimer=0; refreshCombo();
   hurt=0.5; shake=0.35; microX=(Math.random()<.5?-1:1)*0.12; sHit();
   if(patience<=0){ patience=0; updateHUD(); endGame(false); } }
@@ -490,10 +506,11 @@ function hitPlayer(p){ const dmg=11+Math.min(8,fightTime*0.12)+(enrage?2:0);
 function startBoss(i){
   bossIndex=i; boss=BOSSES[i]; boss.proj = i===0?roseTex:espressoTex;
   bossMax=boss.max; bossEgo=boss.max; fightTime=0; bossHurt=0; enrage=false;
-  attackTimer=1.2; projectiles.length=0; warns.length=0;
+  attackTimer=1.2; projectiles.length=0; warns.length=0; playerLane=1;
   elBossName.textContent=boss.name; elBossSub.textContent=boss.sub;
   elEgoWrap.classList.remove('enrage');
   showReply("« "+boss.taunts[0]+" »");
+  state='play'; updateHUD();
 }
 function defeatBoss(){
   projectiles.length=0; warns.length=0;
@@ -534,7 +551,7 @@ function startGame(){
   playerLane=1; posX=LANES[1]; microX=0;
   guard=0; blockCool=0; combo=0; comboTimer=0; charge=0; superReady=false;
   shake=0; hurt=0; interludeT=0;
-  titleOv.classList.add('hidden'); winOv.classList.add('hidden'); loseOv.classList.add('hidden');
+  titleOv.classList.add('hidden'); $('howOv').classList.add('hidden'); winOv.classList.add('hidden'); loseOv.classList.add('hidden');
   elBtnB.classList.remove('cool'); refreshCombo(); updateSuperUI();
   startBoss(0); updateHUD();
 }
@@ -673,7 +690,7 @@ function renderScene(){
   for(const w of warns){ const pulse=0.4+0.6*Math.abs(Math.sin((w.total-w.t)*16));
     list.push({tex:warnTex, x:LANES[w.lane], y:ENEMY_Y+1.0, sH:0.34, vS:0.55, br:true, tint:[pulse+0.4,pulse,pulse*0.5], d:(LANES[w.lane]-camX)*(LANES[w.lane]-camX)+10}); }
   // projectiles
-  for(const p of projectiles){ const parryable=(p.dir>0&&p.lane===playerLane&&p.y>HIT_Y-1.05&&p.y<HIT_Y+0.05);
+  for(const p of projectiles){ const parryable=(p.dir>0&&!p.parried&&p.y>HIT_Y-PARRY_NEAR&&p.y<HIT_Y+0.1);
     list.push({tex:p.tex, x:p.x, y:p.y, sH:0.4, vS:-0.06+Math.sin(p.spin)*0.02, br:true,
                tint:p.tint||(parryable?[1.5,1.5,1.0]:null), d:(p.x-camX)*(p.x-camX)+(p.y-posY)*(p.y-posY)}); }
   list.sort((a,b)=>b.d-a.d);
