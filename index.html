@@ -288,24 +288,51 @@ function drawBoss2(g,talk){
   for(let xx=11;xx<77;xx+=4){ g.beginPath(); g.moveTo(xx,82); g.lineTo(xx+2,124); g.stroke(); }
   g.fillStyle='#46556a'; g.beginPath(); g.moveTo(33,80); g.lineTo(42,93); g.lineTo(51,80); g.closePath(); g.fill();
   // neck
-  g.fillStyle=SKd; g.fillRect(35,72,14,12);
-  // big wavy auburn hair
-  g.fillStyle='#6e4326'; g.beginPath(); g.ellipse(42,46,29,30,0,0,7); g.fill();
-  g.beginPath(); g.ellipse(29,25,9,11,0,0,7); g.fill();
-  g.beginPath(); g.ellipse(50,22,10,11,0,0,7); g.fill();
-  g.beginPath(); g.ellipse(41,17,12,11,0,0,7); g.fill();
-  g.fillStyle='#7e3a2c'; g.fillRect(15,52,10,28); g.fillRect(59,52,10,28);
-  // face
-  g.fillStyle=SK; g.beginPath(); g.ellipse(42,51,19,22,0,0,7); g.fill();
-  g.fillStyle=SKl; g.beginPath(); g.ellipse(42,48,16,17,0,0,7); g.fill();
-  g.fillStyle=SK; g.beginPath(); g.ellipse(42,52,18,20,0,0,7); g.fill();
-  g.fillStyle='rgba(80,55,40,.32)'; g.beginPath(); g.ellipse(42,63,14,11,0,0,Math.PI); g.fill();
-  // green eyes
-  g.fillStyle='#fff'; g.fillRect(32,48,7,4); g.fillRect(45,48,7,4);
-  g.fillStyle='#3c6b4a'; g.fillRect(35,48,3,4); g.fillRect(47,48,3,4);
-  g.fillStyle='#4a3018'; g.fillRect(32,44,8,2); g.fillRect(44,44,8,2);
-  g.fillStyle=SKd; g.fillRect(40,52,4,8);
-  g.fillStyle='#7a4636'; talk? g.fillRect(36,65,12,5): g.fillRect(36,66,12,2);
+  g.fillStyle=SKd; g.fillRect(35,73,14,12); g.fillStyle=SK; g.fillRect(36,73,12,8);
+  const H1='#5c3a24',H2='#6e4326',H3='#8a4a34'; // bruns + reflets auburn
+  // ---- masse de cheveux (arrière + volume sur les côtés) ----
+  g.fillStyle=H2; g.beginPath(); g.ellipse(42,42,28,28,0,0,7); g.fill();
+  g.beginPath(); g.ellipse(19,50,10,21,0.18,0,7); g.fill();   // volume gauche (descend sous l'oreille)
+  g.beginPath(); g.ellipse(65,50,10,21,-0.18,0,7); g.fill();  // volume droit
+  // ---- visage par-dessus (dégage le front) ----
+  g.fillStyle=SK; g.beginPath(); g.ellipse(42,53,18,23,0,0,7); g.fill();
+  // grand front : la peau remonte dans les cheveux
+  g.beginPath(); g.moveTo(26,44); g.quadraticCurveTo(42,27,58,44); g.lineTo(58,54); g.lineTo(26,54); g.closePath(); g.fill();
+  // golfes dégarnis (coins du front qui remontent)
+  g.beginPath(); g.moveTo(25,45); g.lineTo(34,33); g.lineTo(35,47); g.closePath(); g.fill();
+  g.beginPath(); g.moveTo(59,45); g.lineTo(50,33); g.lineTo(49,47); g.closePath(); g.fill();
+  g.fillStyle=SKl; g.beginPath(); g.ellipse(42,52,13,16,0,0,7); g.fill();
+  g.fillStyle=SK; g.beginPath(); g.ellipse(42,55,16,18,0,0,7); g.fill();
+  // ---- mèches ondulées coiffées en arrière (par-dessus la ligne de cheveux) ----
+  g.fillStyle=H1;
+  g.beginPath(); g.ellipse(29,25,10,9,0.35,0,7); g.fill();
+  g.beginPath(); g.ellipse(45,20,12,9,-0.15,0,7); g.fill();
+  g.beginPath(); g.ellipse(57,26,9,8,0.4,0,7); g.fill();
+  g.beginPath(); g.ellipse(37,27,8,7,0,0,7); g.fill();
+  g.fillStyle=H3; // reflets auburn
+  g.beginPath(); g.ellipse(49,22,5,4,0,0,7); g.fill();
+  g.beginPath(); g.ellipse(27,27,4,4,0,0,7); g.fill();
+  g.fillRect(15,55,6,22); g.fillRect(63,55,6,22);
+  // oreilles
+  g.fillStyle=SKd; g.beginPath(); g.ellipse(24,55,4,6,0,0,7); g.fill(); g.beginPath(); g.ellipse(60,55,4,6,0,0,7); g.fill();
+  // rides du front
+  g.strokeStyle='rgba(150,110,80,.32)'; g.lineWidth=1;
+  g.beginPath(); g.moveTo(33,43); g.quadraticCurveTo(42,41,51,43); g.stroke();
+  // sourcils
+  g.fillStyle='#4a3018'; g.fillRect(31,47,9,2); g.fillRect(44,47,9,2);
+  // yeux verts
+  g.fillStyle='#fff'; g.fillRect(32,50,8,4); g.fillRect(45,50,8,4);
+  g.fillStyle='#3c6b4a'; g.fillRect(35,50,3,4); g.fillRect(48,50,3,4);
+  g.fillStyle='#16241a'; g.fillRect(36,51,1,2); g.fillRect(49,51,1,2);
+  // nez marqué
+  g.fillStyle=SKd; g.fillRect(40,54,4,9); g.beginPath(); g.ellipse(42,63,4,3,0,0,7); g.fill();
+  g.fillStyle=SKl; g.fillRect(40,54,1.5,8);
+  // légère barbe de 3 jours
+  g.fillStyle='rgba(80,55,40,.26)'; g.beginPath(); g.ellipse(42,68,14,10,0,0,Math.PI); g.fill();
+  g.fillRect(38,62,8,3);
+  // sourire léger
+  g.strokeStyle='#7a4636'; g.lineWidth=2; g.fillStyle='#7a4636';
+  if(talk){ g.fillRect(36,68,12,5); } else { g.beginPath(); g.moveTo(35,68); g.quadraticCurveTo(42,71,49,68); g.stroke(); }
 }
 
 // ======= projectiles pixel-art =======
